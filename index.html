@@ -1,0 +1,1727 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Cotisations - APEE CES D'EKALI 1</title>
+    <style>
+        /* Styles inchangés */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #4CAF50;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        h2 {
+            color: #4CAF50;
+            margin: 20px 0 15px;
+        }
+        
+        .semaine {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 15px;
+        }
+        
+        .card {
+            background: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid #4CAF50;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            transition: border 0.3s;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            border-color: #4CAF50;
+            outline: none;
+        }
+        
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            margin-right: 10px;
+            transition: background 0.3s;
+        }
+        
+        button:hover {
+            background: #388E3C;
+        }
+        
+        button.secondary {
+            background: #2196F3;
+        }
+        
+        button.secondary:hover {
+            background: #0b7dda;
+        }
+        
+        button.sms {
+            background: #9C27B0;
+        }
+        
+        button.sms:hover {
+            background: #7B1FA2;
+        }
+        
+        button.print {
+            background: #607D8B;
+        }
+        
+        button.print:hover {
+            background: #455A64;
+        }
+        
+        button.delete {
+            background: #f44336;
+        }
+        
+        button.delete:hover {
+            background: #d32f2f;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        th {
+            background-color: #f2f7f9;
+            font-weight: 600;
+        }
+        
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .total-row {
+            font-weight: bold;
+            background-color: #e8f5e9;
+        }
+        
+        .student-list {
+            margin: 15px 0;
+        }
+        
+        .student-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: #f9f9f9;
+            margin-bottom: 8px;
+            border-radius: 4px;
+        }
+        
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .signature {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+        }
+        
+        .signature div {
+            width: 45%;
+            border-top: 1px solid #333;
+            padding-top: 5px;
+            text-align: center;
+        }
+        
+        .montant-info {
+            background: #E8F5E9;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 15px 0;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        /* Styles pour l'impression */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+                font-size: 12pt;
+            }
+            
+            .container {
+                box-shadow: none;
+                padding: 0;
+                max-width: 100%;
+            }
+            
+            .no-print, .card, button, .form-group, .student-list, .actions, .signature, #instructions {
+                display: none !important;
+            }
+            
+            header, #tableau-paiements {
+                display: block !important;
+            }
+            
+            h1, h2 {
+                color: black !important;
+            }
+            
+            .print-only {
+                display: block;
+            }
+            
+            table {
+                font-size: 10pt;
+                page-break-inside: auto;
+            }
+            
+            tr {
+                page-break-inside: avoid;
+                page-break-after: auto;
+            }
+            
+            th, td {
+                padding: 6px 8px;
+            }
+        }
+        
+        .print-only {
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            .semaine {
+                flex-direction: column;
+            }
+            
+            .actions {
+                flex-direction: column;
+            }
+            
+            button {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+        }
+        
+        /* Nouveaux styles pour les récapitulatifs */
+        .recap-container {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        
+        .recap-header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 5px;
+        }
+        
+        .recap-parent {
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .recap-actions {
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        #instructions {
+            margin-top: 30px;
+            padding: 15px;
+            background-color: #f0f7ff;
+            border-radius: 5px;
+            border-left: 4px solid #2196F3;
+        }
+        
+        #instructions ul {
+            margin-left: 20px;
+        }
+        
+        #instructions li {
+            margin-bottom: 8px;
+        }
+        
+        /* Nouveaux styles pour la détection des parents */
+        .parent-info {
+            background-color: #e8f5e9;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            display: none;
+        }
+        
+        .parent-existant {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+        }
+        
+        .parent-nouveau {
+            background-color: #d4edda;
+            border-left: 4px solid #28a745;
+        }
+        
+        /* Style pour l'alerte de parent existant */
+        .alert-parent {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+            z-index: 1000;
+            width: 80%;
+            max-width: 500px;
+        }
+        
+        .alert-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+        
+        /* Nouveau style pour indiquer le paiement de dette seulement */
+        .paiement-dette {
+            background-color: #fff3cd;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            border-left: 4px solid #ffc107;
+            display: none;
+        }
+        
+        /* Nouveaux styles pour la gestion des fichiers */
+        .file-management {
+            background: #e8f5e9;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #4CAF50;
+        }
+        
+        .file-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+        
+        .file-button {
+            background: #2196F3;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .file-button:hover {
+            background: #0b7dda;
+        }
+        
+        .file-button.import {
+            background: #4CAF50;
+        }
+        
+        .file-button.import:hover {
+            background: #388E3C;
+        }
+        
+        .file-button.backup {
+            background: #FF9800;
+        }
+        
+        .file-button.backup:hover {
+            background: #F57C00;
+        }
+        
+        .file-info {
+            margin-top: 15px;
+            padding: 10px;
+            background: #f0f7ff;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        
+        #file-input {
+            display: none;
+        }
+        
+        /* Nouveaux styles pour l'impact sur le budget */
+        .budget-impact {
+            background-color: #e3f2fd;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            border-left: 4px solid #2196F3;
+        }
+        
+        .budget-stats {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin: 15px 0;
+        }
+        
+        .stat-box {
+            background: white;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+            min-width: 200px;
+            margin: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+        
+        .progress-container {
+            margin: 10px 0;
+        }
+        
+        .progress-bar {
+            height: 20px;
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background-color: #4CAF50;
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+        
+        .progress-text {
+            text-align: center;
+            margin-top: 5px;
+            font-weight: bold;
+        }
+        
+        /* Styles pour les onglets */
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .tab-button {
+            padding: 10px 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            color: #666;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .tab-button.active {
+            color: #4CAF50;
+            border-bottom: 3px solid #4CAF50;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Style pour les noms de mois */
+        .month-name {
+            font-weight: bold;
+            text-transform: capitalize;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="no-print">
+            <h1>APEE DU CES D'EKALI 1</h1>
+            <h2>GESTION DES COTISATIONS DES PARENTS</h2>
+            <div class="semaine">
+                <div>Semaine du: <input type="date" id="date-debut"></div>
+                <div>au: <input type="date" id="date-fin"></div>
+            </div>
+        </header>
+
+        <div class="tabs no-print">
+            <button class="tab-button active" onclick="showTab('paiement')">Paiement des Cotisations</button>
+            <button class="tab-button" onclick="showTab('budget')">Impact sur le Budget</button>
+            <button class="tab-button" onclick="showTab('historique')">Historique des Paiements</button>
+        </div>
+
+        <!-- Onglet Paiement des Cotisations -->
+        <div id="paiement" class="tab-content active">
+            <!-- Nouvelle section pour la gestion des fichiers -->
+            <div class="file-management no-print">
+                <h2>Gestion des Fichiers de Données</h2>
+                <p>Exportez vos données pour les sauvegarder ou les importer sur un autre appareil.</p>
+                
+                <div class="file-buttons">
+                    <button class="file-button" onclick="exporterPaiements()">
+                        <span>📥</span> Exporter les paiements
+                    </button>
+                    <button class="file-button import" onclick="importerPaiements()">
+                        <span>📤</span> Importer des paiements
+                    </button>
+                    <button class="file-button backup" onclick="sauvegarderBackup()">
+                        <span>💾</span> Sauvegarder Backup Complet
+                    </button>
+                    <input type="file" id="file-input" accept=".json">
+                </div>
+                
+                <div class="file-info">
+                    <p><strong>Instructions :</strong></p>
+                    <ul>
+                        <li>Exportez les paiements pour sauvegarder les données actuelles</li>
+                        <li>Importez des paiements pour restaurer une sauvegarde</li>
+                        <li>Les fichiers sont sauvegardés au format JSON dans votre dossier de téléchargements</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card no-print">
+                <h2>Informations du Parent/Tuteur</h2>
+                
+                <div id="info-parent" class="parent-info">
+                    <strong>Statut: </strong><span id="statut-parent"></span>
+                    <div id="details-parent"></div>
+                </div>
+                
+                <div id="paiement-dette" class="paiement-dette">
+                    <strong>⚠ Paiement de dette seulement</strong>
+                    <p>Le parent existant n'a pas ajouté de nouvel élève. Le montant à payer correspond au solde précédent.</p>
+                </div>
+                
+                <div class="form-group">
+                    <label for="nom-parent">Nom complet du parent/tuteur *</label>
+                    <input type="text" id="nom-parent" required placeholder="Nom et prénom" onblur="verifierParent()">
+                </div>
+                
+                <div class="form-group">
+                    <label for="telephone">Numéro de téléphone *</label>
+                    <input type="tel" id="telephone" required placeholder="Pour l'envoi de SMS" onblur="verifierParent()">
+                </div>
+                
+                <div class="form-group">
+                    <label for="adresse">Adresse complète</label>
+                    <textarea id="adresse" rows="2" placeholder="Adresse postale"></textarea>
+                </div>
+                
+                <div class="montant-info">
+                    Cotisation par élève: 12 500 FCFA
+                </div>
+            </div>
+
+            <div class="card no-print">
+                <h2>Ajouter un élève</h2>
+                <div class="form-group">
+                    <label for="nom-eleve">Nom de l'élève *</label>
+                    <input type="text" id="nom-eleve" placeholder="Nom et prénom">
+                </div>
+                
+                <div class="form-group">
+                    <label for="classe">Classe de l'élève *</label>
+                    <input type="text" id="classe" placeholder="Classe">
+                </div>
+                
+                <button onclick="ajouterEleve()">+ Ajouter cet élève</button>
+                
+                <div class="student-list">
+                    <h3>Élèves ajoutés</h3>
+                    <div id="liste-eleves">
+                        <!-- Les élèves seront ajoutés ici dynamiquement -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="card no-print">
+                <h2>Paiement</h2>
+                <div class="form-group">
+                    <label for="montant-total">Montant total à payer</label>
+                    <input type="text" id="montant-total" readonly value="0 FCFA">
+                </div>
+                
+                <div class="form-group">
+                    <label for="montant-verse">Montant versé (FCFA) *</label>
+                    <input type="number" id="montant-verse" min="0" onchange="calculerReste()">
+                </div>
+                
+                <div class="form-group">
+                    <label for="reste-payer">Reste à payer (FCFA)</label>
+                    <input type="text" id="reste-payer" readonly value="0 FCFA">
+                </div>
+                
+                <div class="form-group">
+                    <label for="observations">Observations</label>
+                    <textarea id="observations" rows="2" placeholder="Notes éventuelles"></textarea>
+                </div>
+                
+                <div class="actions">
+                    <button onclick="enregistrerPaiement()">Enregistrer le paiement</button>
+                    <button class="sms" onclick="envoyerSMS()">📱 Envoyer SMS récapitulatif</button>
+                    <button class="secondary" onclick="afficherRecap()">Afficher le récapitulatif</button>
+                    <button class="print" onclick="imprimerHistorique()">🖨️ Imprimer Historique</button>
+                    <button class="secondary" onclick="genererRecapGlobal()">📊 Récap Global</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Onglet Impact sur le Budget -->
+        <div id="budget" class="tab-content">
+            <div class="recap-header">
+                <h2>Impact des Cotisations sur le Budget Prévisionnel</h2>
+                <p>État des recettes provenant des cotisations des parents</p>
+            </div>
+            
+            <div class="budget-stats">
+                <div class="stat-box">
+                    <h3>Objectif de Recettes</h3>
+                    <div class="stat-value" id="objectif-recettes">1 250 000 FCFA</div>
+                    <p>Cotisations attendues (100 élèves × 12 500 FCFA)</p>
+                </div>
+                
+                <div class="stat-box">
+                    <h3>Recettes Réalisées</h3>
+                    <div class="stat-value" id="recettes-realisees">0 FCFA</div>
+                    <p>Total des cotisations perçues</p>
+                </div>
+                
+                <div class="stat-box">
+                    <h3>Taux de Réalisation</h3>
+                    <div class="stat-value" id="taux-realisation">0%</div>
+                    <p>Pourcentage de l'objectif atteint</p>
+                </div>
+            </div>
+            
+            <div class="progress-container">
+                <h3>Progression vers l'objectif</h3>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-bar-fill" style="width: 0%"></div>
+                </div>
+                <div class="progress-text" id="progress-text">0%</div>
+            </div>
+            
+            <div class="budget-impact">
+                <h3>Détail des cotisations par mois</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Mois</th>
+                            <th>Nombre de paiements</th>
+                            <th>Montant perçu</th>
+                            <th>Élèves concernés</th>
+                        </tr>
+                    </thead>
+                    <tbody id="details-mensuels">
+                        <!-- Les détails mensuels seront ajoutés ici dynamiquement -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="recap-actions">
+                <button onclick="imprimerRapportBudget()">Imprimer le rapport budget</button>
+                <button class="secondary" onclick="exporterRapportBudget()">Exporter les données budget</button>
+            </div>
+        </div>
+
+        <!-- Onglet Historique des Paiements -->
+        <div id="historique" class="tab-content">
+            <h2>Historique des paiements</h2>
+            <table id="tableau-paiements">
+                <thead>
+                    <tr>
+                        <th>Parent/Tuteur</th>
+                        <th>Téléphone</th>
+                        <th>Élève(s)</th>
+                        <th>Classe(s)</th>
+                        <th>Montant versé</th>
+                        <th>Reste à payer</th>
+                        <th>Date</th>
+                        <th class="no-print">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Les paiements seront ajoutés ici dynamiquement -->
+                </tbody>
+            </table>
+            
+            <div class="no-print recap-actions">
+                <button onclick="genererRecapGlobal()">Générer un récapitulatif global</button>
+                <button onclick="exporterDonnees()">Exporter toutes les données</button>
+            </div>
+            
+            <div id="recap-global" class="recap-container">
+                <div class="recap-header">
+                    <h2>Récapitulatif Global des Paiements</h2>
+                    <p>Date de génération: <span id="date-recap"></span></p>
+                </div>
+                <div id="contenu-recap"></div>
+                <div class="recap-actions">
+                    <button onclick="imprimerRecap()">Imprimer ce récapitulatif</button>
+                    <button onclick="fermerRecap()">Fermer</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="signature no-print">
+            <div>Le Caissier</div>
+            <div>Le Trésorier</div>
+        </div>
+        
+        <div id="instructions" class="no-print">
+            <b>Instructions d'utilisation</b>
+            <ul>
+                <li>1. Renseignez les informations du parent (nom, téléphone, adresse)</li>
+                <li>2. Ajoutez un ou plusieurs élèves avec le bouton "Ajouter cet élève"</li>
+                <li>3. Le montant total est calculé automatiquement</li>
+                <li>4. Saisissez le montant versé, le reste à payer se calcule automatiquement</li>
+                <li>5. Cliquez sur "Enregistrer le paiement" pour sauvegarder</li>
+                <li>6. Utilisez le bouton "Envoyer SMS" pour envoyer un récapitulatif au parent</li>
+                <li>7. Utilisez "Imprimer Historique" pour imprimer uniquement le tableau des paiements</li>
+                <li>8. Utilisez "Récap Global" pour générer un rapport de tous les parents</li>
+                <li>9. Consultez l'onglet "Impact sur le Budget" pour voir l'état des recettes</li>
+                <li>10. Utilisez le bouton 🗑️ pour supprimer un paiement indésirable</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        let eleves = [];
+        let paiements = [];
+        const cotisationParEleve = 12500;
+        let parentExistant = null;
+        let totalRestePrecedent = 0;
+        
+        // Noms des mois en français
+        const nomsMois = [
+            'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
+            'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
+        ];
+        
+        // Charger les données au démarrage
+        document.addEventListener('DOMContentLoaded', function() {
+            chargerPaiements();
+            
+            // Initialisation des dates
+            const aujourdhui = new Date();
+            document.getElementById('date-debut').valueAsDate = aujourdhui;
+            
+            let finSemaine = new Date();
+            finSemaine.setDate(aujourdhui.getDate() + 6);
+            document.getElementById('date-fin').valueAsDate = finSemaine;
+            
+            // Mettre à jour l'affichage du budget
+            mettreAJourBudget();
+        });
+        
+        // Fonction pour changer d'onglet
+        function showTab(tabId) {
+            // Masquer tous les contenus d'onglets
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Désactiver tous les boutons d'onglets
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active');
+            });
+            
+            // Afficher l'onglet sélectionné
+            document.getElementById(tabId).classList.add('active');
+            
+            // Activer le bouton d'onglet correspondant
+            document.querySelector(`button[onclick="showTab('${tabId}')"]`).classList.add('active');
+            
+            // Si c'est l'onglet budget, mettre à jour les statistiques
+            if (tabId === 'budget') {
+                mettreAJourBudget();
+            }
+        }
+        
+        // Fonction pour mettre à jour l'affichage du budget
+        function mettreAJourBudget() {
+            // Calculer le total des cotisations perçues
+            const totalCotisations = paiements.reduce((total, paiement) => total + paiement.montantVerse, 0);
+            
+            // Objectif de recettes (100 élèves × 12 500 FCFA)
+            const objectifRecettes = 100 * cotisationParEleve;
+            
+            // Taux de réalisation
+            const tauxRealisation = objectifRecettes > 0 ? (totalCotisations / objectifRecettes) * 100 : 0;
+            
+            // Mettre à jour l'affichage
+            document.getElementById('objectif-recettes').textContent = objectifRecettes.toLocaleString('fr-FR') + ' FCFA';
+            document.getElementById('recettes-realisees').textContent = totalCotisations.toLocaleString('fr-FR') + ' FCFA';
+            document.getElementById('taux-realisation').textContent = tauxRealisation.toFixed(1) + '%';
+            
+            // Mettre à jour la barre de progression
+            document.getElementById('progress-bar-fill').style.width = Math.min(tauxRealisation, 100) + '%';
+            document.getElementById('progress-text').textContent = Math.min(tauxRealisation, 100).toFixed(1) + '%';
+            
+            // Mettre à jour les détails mensuels
+            mettreAJourDetailsMensuels();
+        }
+        
+        // Fonction pour mettre à jour les détails mensuels des cotisations
+        function mettreAJourDetailsMensuels() {
+            const detailsMensuels = document.getElementById('details-mensuels');
+            detailsMensuels.innerHTML = '';
+            
+            // Grouper les paiements par mois
+            const paiementsParMois = {};
+            
+            paiements.forEach(paiement => {
+                let datePaiement;
+                
+                // Gestion des différents formats de date
+                if (paiement.datePaiement.includes('/')) {
+                    // Format JJ/MM/AAAA
+                    const [jour, mois, annee] = paiement.datePaiement.split('/');
+                    datePaiement = new Date(annee, mois - 1, jour);
+                } else if (paiement.datePaiement.includes('-')) {
+                    // Format AAAA-MM-JJ
+                    const [annee, mois, jour] = paiement.datePaiement.split('-');
+                    datePaiement = new Date(annee, mois - 1, jour);
+                } else {
+                    // Format inconnu, utiliser la date actuelle
+                    datePaiement = new Date();
+                }
+                
+                const moisAnnee = `${nomsMois[datePaiement.getMonth()]} ${datePaiement.getFullYear()}`;
+                
+                if (!paiementsParMois[moisAnnee]) {
+                    paiementsParMois[moisAnnee] = {
+                        montantTotal: 0,
+                        nombrePaiements: 0,
+                        nombreEleves: 0
+                    };
+                }
+                
+                paiementsParMois[moisAnnee].montantTotal += paiement.montantVerse;
+                paiementsParMois[moisAnnee].nombrePaiements += 1;
+                paiementsParMois[moisAnnee].nombreEleves += paiement.eleves.length;
+            });
+            
+            // Trier les mois chronologiquement
+            const moisTries = Object.keys(paiementsParMois).sort((a, b) => {
+                const [moisA, anneeA] = a.split(' ');
+                const [moisB, anneeB] = b.split(' ');
+                
+                const indexA = nomsMois.indexOf(moisA);
+                const indexB = nomsMois.indexOf(moisB);
+                
+                if (anneeA !== anneeB) {
+                    return parseInt(anneeA) - parseInt(anneeB);
+                }
+                return indexA - indexB;
+            });
+            
+            // Afficher les détails par mois
+            for (const mois of moisTries) {
+                const row = detailsMensuels.insertRow();
+                row.insertCell(0).innerHTML = `<span class="month-name">${mois}</span>`;
+                row.insertCell(1).textContent = paiementsParMois[mois].nombrePaiements;
+                row.insertCell(2).textContent = paiementsParMois[mois].montantTotal.toLocaleString('fr-FR') + ' FCFA';
+                row.insertCell(3).textContent = paiementsParMois[mois].nombreEleves;
+            }
+            
+            // Ajouter une ligne de total
+            if (Object.keys(paiementsParMois).length > 0) {
+                const totalRow = detailsMensuels.insertRow();
+                totalRow.className = 'total-row';
+                totalRow.insertCell(0).textContent = 'TOTAL';
+                totalRow.insertCell(1).textContent = paiements.length;
+                
+                const totalMontant = paiements.reduce((total, p) => total + p.montantVerse, 0);
+                totalRow.insertCell(2).textContent = totalMontant.toLocaleString('fr-FR') + ' FCFA';
+                
+                const totalEleves = paiements.reduce((total, p) => total + p.eleves.length, 0);
+                totalRow.insertCell(3).textContent = totalEleves;
+            }
+        }
+        
+        // Fonction pour formater la date en français
+        function formaterDate(date) {
+            const jour = date.getDate().toString().padStart(2, '0');
+            const mois = (date.getMonth() + 1).toString().padStart(2, '0');
+            const annee = date.getFullYear();
+            return `${jour}/${mois}/${annee}`;
+        }
+        
+        // Fonction pour supprimer un paiement
+        function supprimerPaiement(id) {
+            if (confirm("Êtes-vous sûr de vouloir supprimer ce paiement ? Cette action est irréversible.")) {
+                // Trouver l'index du paiement
+                const index = paiements.findIndex(p => p.id === id);
+                
+                if (index !== -1) {
+                    // Supprimer le paiement du tableau
+                    paiements.splice(index, 1);
+                    
+                    // Sauvegarder les données modifiées
+                    sauvegarderPaiements();
+                    
+                    // Mettre à jour l'affichage
+                    const tbody = document.querySelector('#tableau-paiements tbody');
+                    tbody.innerHTML = '';
+                    paiements.forEach(paiement => {
+                        afficherPaiementDansTableau(paiement);
+                    });
+                    
+                    // Mettre à jour le budget
+                    mettreAJourBudget();
+                    
+                    alert("Paiement supprimé avec succès !");
+                }
+            }
+        }
+        
+        // Fonction pour afficher un paiement dans le tableau
+        function afficherPaiementDansTableau(paiement) {
+            const tbody = document.querySelector('#tableau-paiements tbody');
+            const newRow = tbody.insertRow();
+            
+            newRow.insertCell(0).textContent = paiement.nomParent;
+            newRow.insertCell(1).textContent = paiement.telephone;
+            newRow.insertCell(2).textContent = paiement.eleves.map(e => e.nom).join(', ') || 'Aucun élève ajouté (paiement dette)';
+            newRow.insertCell(3).textContent = paiement.eleves.map(e => e.classe).join(', ') || '-';
+            newRow.insertCell(4).textContent = `${paiement.montantVerse.toLocaleString('fr-FR')} FCFA`;
+            newRow.insertCell(5).textContent = `${paiement.reste.toLocaleString('fr-FR')} FCFA`;
+            newRow.insertCell(6).textContent = paiement.datePaiement;
+            
+            const actionCell = newRow.insertCell(7);
+            actionCell.className = 'no-print';
+            actionCell.innerHTML = `
+                <button class="sms" onclick="envoyerSMS('${paiement.telephone}', '${paiement.nomParent}', ${paiement.montantVerse}, ${paiement.reste})">📱</button>
+                <button onclick="afficherDetails(this)">📋</button>
+                <button onclick="genererRecapParent('${paiement.nomParent}')">📊</button>
+                <button class="delete" onclick="supprimerPaiement(${paiement.id})">🗑️</button>
+            `;
+        }
+        
+        // Fonction pour enregistrer un paiement
+        function enregistrerPaiement() {
+            const nomParent = document.getElementById('nom-parent').value;
+            const telephone = document.getElementById('telephone').value;
+            const adresse = document.getElementById('adresse').value;
+            const montantVerse = parseFloat(document.getElementById('montant-verse').value) || 0;
+            const observations = document.getElementById('observations').value;
+            
+            if (!nomParent || !telephone) {
+                alert("Veuillez remplir les informations du parent (nom et téléphone).");
+                return;
+            }
+            
+            // Vérification différente selon si c'est un parent existant ou non
+            if (!parentExistant && eleves.length === 0) {
+                alert("Veuillez ajouter au moins un élève pour un nouveau parent.");
+                return;
+            }
+            
+            let montantTotal = 0;
+            
+            // Si c'est un parent existant et qu'aucun élève n'est ajouté
+            if (parentExistant && eleves.length === 0) {
+                montantTotal = totalRestePrecedent;
+            } 
+            // Si des élèves sont ajoutés (nouveau parent ou parent existant)
+            else {
+                montantTotal = eleves.length * cotisationParEleve;
+                
+                // Ajouter le solde précédent pour les parents existants
+                if (parentExistant) {
+                    montantTotal += totalRestePrecedent;
+                }
+            }
+            
+            const reste = montantTotal - montantVerse;
+            const datePaiement = formaterDate(new Date());
+            
+            // Créer l'objet paiement
+            const paiement = {
+                id: Date.now(), // ID unique basé sur le timestamp
+                nomParent,
+                telephone,
+                adresse,
+                eleves: [...eleves], // Copie du tableau d'élèves
+                montantTotal,
+                montantVerse,
+                reste,
+                observations,
+                datePaiement
+            };
+            
+            // Ajouter au tableau des paiements
+            paiements.push(paiement);
+            
+            // Sauvegarder dans le localStorage
+            sauvegarderPaiements();
+            
+            // Mettre à jour l'affichage
+            afficherPaiementDansTableau(paiement);
+            
+            // Mettre à jour le budget
+            mettreAJourBudget();
+            
+            // Réinitialiser le formulaire
+            reinitialiserFormulaire();
+            
+            alert("Paiement enregistré avec succès !");
+        }
+        
+        // Fonction pour vérifier si un parent existe déjà
+        function verifierParent() {
+            const nomParent = document.getElementById('nom-parent').value.trim();
+            const telephone = document.getElementById('telephone').value.trim();
+            
+            if (nomParent && telephone) {
+                // Normaliser les données pour la comparaison
+                const nomParentNormalise = nomParent.toLowerCase().replace(/\s+/g, ' ');
+                const telephoneNormalise = telephone.replace(/\s+/g, '');
+                
+                // Rechercher si ce parent existe déjà (avec comparaison normalisée)
+                const paiementsParent = paiements.filter(p => {
+                    const pNomNormalise = p.nomParent.toLowerCase().replace(/\s+/g, ' ');
+                    const pTelNormalise = p.telephone.replace(/\s+/g, '');
+                    return pNomNormalise === nomParentNormalise && pTelNormalise === telephoneNormalise;
+                });
+                
+                if (paiementsParent.length > 0) {
+                    parentExistant = paiementsParent[paiementsParent.length - 1];
+                    
+                    // Calculer le solde restant pour ce parent
+                    totalRestePrecedent = 0;
+                    paiementsParent.forEach(p => {
+                        totalRestePrecedent += p.reste;
+                    });
+                    
+                    // Afficher l'alerte pour préremplir
+                    afficherAlerteParentExistant(nomParent, telephone, totalRestePrecedent);
+                } else {
+                    parentExistant = null;
+                    totalRestePrecedent = 0;
+                    
+                    // Nouveau parent - créer un dossier
+                    const infoParent = document.getElementById('info-parent');
+                    const statutParent = document.getElementById('statut-parent');
+                    const detailsParent = document.getElementById('details-parent');
+                    
+                    infoParent.style.display = 'block';
+                    infoParent.className = 'parent-info parent-nouveau';
+                    statutParent.textContent = 'Nouveau parent';
+                    detailsParent.innerHTML = '<p>Aucun historique trouvé pour ce parent. Un nouveau dossier sera créé.</p>';
+                    
+                    // Cacher l'alerte de paiement de dette
+                    document.getElementById('paiement-dette').style.display = 'none';
+                    
+                    // Réinitialiser le montant total
+                    calculerMontantTotal();
+                }
+            }
+        }
+        
+        // Fonction pour afficher une alerte lorsque le parent existe déjà
+        function afficherAlerteParentExistant(nomParent, telephone, solde) {
+            const overlay = document.createElement('div');
+            overlay.className = 'overlay';
+            
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'alert-parent';
+            alertDiv.innerHTML = `
+                <h3>Parent existant détecté</h3>
+                <p>Nous avons trouvé un dossier pour <strong>${nomParent}</strong> (${telephone}).</p>
+                <p>Solde précédent: <strong>${solde.toLocaleString('fr-FR')} FCFA</strong></p>
+                <p>Souhaitez-vous préremplir les informations de ce parent?</p>
+                <div class="alert-buttons">
+                    <button onclick="prefillParentInfo()">Oui, préremplir</button>
+                    <button onclick="closeAlert()" style="background: #f44336;">Non, continuer</button>
+                </div>
+            `;
+            
+            document.body.appendChild(overlay);
+            document.body.appendChild(alertDiv);
+        }
+        
+        // Fonction pour fermer l'alerte
+        function closeAlert() {
+            const overlay = document.querySelector('.overlay');
+            const alertDiv = document.querySelector('.alert-parent');
+            
+            if (overlay) document.body.removeChild(overlay);
+            if (alertDiv) document.body.removeChild(alertDiv);
+            
+            // Mettre à jour l'affichage du parent existant
+            const infoParent = document.getElementById('info-parent');
+            const statutParent = document.getElementById('statut-parent');
+            const detailsParent = document.getElementById('details-parent');
+            
+            infoParent.style.display = 'block';
+            infoParent.className = 'parent-info parent-existant';
+            statutParent.textContent = 'Parent existant';
+            detailsParent.innerHTML = `
+                <p><strong>Solde précédent:</strong> ${totalRestePrecedent.toLocaleString('fr-FR')} FCFA</p>
+                <p><strong>Note:</strong> Les informations n'ont pas été préremplies.</p>
+            `;
+            
+            // Afficher l'alerte de paiement de dette seulement
+            document.getElementById('paiement-dette').style.display = 'block';
+            
+            // Calculer le montant total
+            calculerMontantTotal();
+        }
+        
+        // Fonction pour préremplir les informations du parent
+        function prefillParentInfo() {
+            const overlay = document.querySelector('.overlay');
+            const alertDiv = document.querySelector('.alert-parent');
+            
+            if (overlay) document.body.removeChild(overlay);
+            if (alertDiv) document.body.removeChild(alertDiv);
+            
+            // Préremplir les informations du parent
+            document.getElementById('nom-parent').value = parentExistant.nomParent;
+            document.getElementById('telephone').value = parentExistant.telephone;
+            document.getElementById('adresse').value = parentExistant.adresse || '';
+            
+            // Mettre à jour l'affichage du parent existant
+            const infoParent = document.getElementById('info-parent');
+            const statutParent = document.getElementById('statut-parent');
+            const detailsParent = document.getElementById('details-parent');
+            
+            infoParent.style.display = 'block';
+            infoParent.className = 'parent-info parent-existant';
+            statutParent.textContent = 'Parent existant - Informations préremplies';
+            detailsParent.innerHTML = `
+                <p><strong>Solde précédent:</strong> ${totalRestePrecedent.toLocaleString('fr-FR')} FCFA</p>
+                <p><strong>Élèves précédents:</strong> ${parentExistant.eleves.map(e => e.nom).join(', ')}</p>
+            `;
+            
+            // Afficher l'alerte de paiement de dette seulement
+            document.getElementById('paiement-dette').style.display = 'block';
+            
+            // Calculer le montant total
+            calculerMontantTotal();
+        }
+        
+        // Fonction pour ajouter un élève
+        function ajouterEleve() {
+            const nomEleve = document.getElementById('nom-eleve').value;
+            const classe = document.getElementById('classe').value;
+            
+            if (!nomEleve || !classe) {
+                alert("Veuillez remplir le nom et la classe de l'élève.");
+                return;
+            }
+            
+            eleves.push({ nom: nomEleve, classe: classe });
+            afficherEleves();
+            
+            // Cacher l'alerte de paiement de dette si on ajoute un élève
+            document.getElementById('paiement-dette').style.display = 'none';
+            
+            // Réinitialiser les champs
+            document.getElementById('nom-eleve').value = '';
+            document.getElementById('classe').value = '';
+            
+            // Calculer le montant total
+            calculerMontantTotal();
+        }
+        
+        // Fonction pour afficher la liste des élèves
+        function afficherEleves() {
+            const listeEleves = document.getElementById('liste-eleves');
+            listeEleves.innerHTML = '';
+            
+            eleves.forEach((eleve, index) => {
+                const div = document.createElement('div');
+                div.className = 'student-item';
+                div.innerHTML = `
+                    <div>${eleve.nom} (${eleve.classe})</div>
+                    <button class="no-print" onclick="supprimerEleve(${index})">✕</button>
+                `;
+                listeEleves.appendChild(div);
+            });
+        }
+        
+        // Fonction pour supprimer un élève
+        function supprimerEleve(index) {
+            eleves.splice(index, 1);
+            afficherEleves();
+            
+            // Afficher l'alerte de paiement de dette si on supprime tous les élèves pour un parent existant
+            if (eleves.length === 0 && parentExistant) {
+                document.getElementById('paiement-dette').style.display = 'block';
+            }
+            
+            calculerMontantTotal();
+        }
+        
+        // Fonction pour calculer le montant total
+        function calculerMontantTotal() {
+            let montantTotal = 0;
+            
+            // Si c'est un parent existant et qu'aucun élève n'est ajouté
+            if (parentExistant && eleves.length === 0) {
+                montantTotal = totalRestePrecedent;
+            } 
+            // Si des élèves sont ajoutés (nouveau parent ou parent existant)
+            else {
+                montantTotal = eleves.length * cotisationParEleve;
+                
+                // Ajouter le solde précédent pour les parents existants
+                if (parentExistant) {
+                    montantTotal += totalRestePrecedent;
+                }
+            }
+            
+            document.getElementById('montant-total').value = `${montantTotal.toLocaleString('fr-FR')} FCFA`;
+            calculerReste();
+        }
+        
+        // Fonction pour calculer le reste à payer
+        function calculerReste() {
+            let montantTotal = 0;
+            
+            // Si c'est un parent existant et qu'aucun élève n'est ajouté
+            if (parentExistant && eleves.length === 0) {
+                montantTotal = totalRestePrecedent;
+            } 
+            // Si des élèves sont ajoutés (nouveau parent ou parent existant)
+            else {
+                montantTotal = eleves.length * cotisationParEleve;
+                
+                // Ajouter le solde précédent pour les parents existants
+                if (parentExistant) {
+                    montantTotal += totalRestePrecedent;
+                }
+            }
+            
+            const montantVerse = parseFloat(document.getElementById('montant-verse').value) || 0;
+            const reste = montantTotal - montantVerse;
+            
+            document.getElementById('reste-payer').value = `${reste.toLocaleString('fr-FR')} FCFA`;
+            
+            // Changer la couleur si reste à payer
+            if (reste > 0) {
+                document.getElementById('reste-payer').style.color = '#d32f2f';
+            } else {
+                document.getElementById('reste-payer').style.color = '#388E3C';
+            }
+        }
+        
+        // Fonction pour sauvegarder les paiements
+        function sauvegarderPaiements() {
+            localStorage.setItem('apee_paiements', JSON.stringify(paiements));
+        }
+        
+        // Fonction pour charger les paiements
+        function chargerPaiements() {
+            const paiementsSauvegardes = localStorage.getItem('apee_paiements');
+            if (paiementsSauvegardes) {
+                try {
+                    const data = JSON.parse(paiementsSauvegardes);
+                    
+                    // Vérifier si c'est un backup complet ou juste le tableau de paiements
+                    if (data && data.paiements && Array.isArray(data.paiements)) {
+                        // C'est un backup complet
+                        paiements = data.paiements;
+                    } else if (Array.isArray(data)) {
+                        // C'est juste le tableau de paiements
+                        paiements = data;
+                    } else {
+                        console.error("Format de données inconnu, initialisation avec un tableau vide");
+                        paiements = [];
+                    }
+                    
+                    // Afficher tous les paiements dans le tableau
+                    paiements.forEach(paiement => {
+                        afficherPaiementDansTableau(paiement);
+                    });
+                } catch (error) {
+                    console.error("Erreur lors du chargement des données:", error);
+                    paiements = [];
+                }
+            }
+        }
+        
+        // Fonction pour envoyer un SMS
+        function envoyerSMS(telephone, nomParent, montantVerse, reste) {
+            // En production, cette fonction enverrait un vrai SMS via une API
+            if (!telephone) {
+                telephone = document.getElementById('telephone').value;
+                nomParent = document.getElementById('nom-parent').value;
+                montantVerse = parseFloat(document.getElementById('montant-verse').value) || 0;
+                
+                let montantTotal = 0;
+                if (parentExistant && eleves.length === 0) {
+                    montantTotal = totalRestePrecedent;
+                } else {
+                    montantTotal = eleves.length * cotisationParEleve;
+                    if (parentExistant) {
+                        montantTotal += totalRestePrecedent;
+                    }
+                }
+               reste = montantTotal - montantVerse;
+            }
+            
+            const message = `APEE EKALI 1 - Récap. ${nomParent}: ${montantVerse.toLocaleString('fr-FR')} FCFA versés, ${reste.toLocaleString('fr-FR')} FCFA restants. Merci !`;
+            
+            alert(`SMS serait envoyé au ${telephone}:\n\n${message}`);
+        }
+        
+        // Fonction pour afficher un récapitulatif
+        function afficherRecap() {
+            const nomParent = document.getElementById('nom-parent').value;
+            const telephone = document.getElementById('telephone').value;
+            const montantVerse = parseFloat(document.getElementById('montant-verse').value) || 0;
+            
+            let montantTotal = 0;
+            
+            // Si c'est un parent existant et qu'aucun élève n'est ajouté
+            if (parentExistant && eleves.length === 0) {
+                montantTotal = totalRestePrecedent;
+            } 
+            // Si des élèves sont ajoutés (nouveau parent ou parent existant)
+            else {
+                montantTotal = eleves.length * cotisationParEleve;
+                
+                // Ajouter le solde précédent pour les parents existants
+                if (parentExistant) {
+                    montantTotal += totalRestePrecedent;
+                }
+            }
+            
+            const reste = montantTotal - montantVerse;
+            
+            if (!parentExistant && eleves.length === 0) {
+                alert("Veuillez d'abord ajouter au moins un élève.");
+                return;
+            }
+            
+            let recap = `RÉCAPITULATIF - APEE EKALI 1\n\n`;
+            recap += `Parent: ${nomParent}\n`;
+            recap += `Téléphone: ${telephone}\n\n`;
+            
+            if (eleves.length > 0) {
+                recap += `Élève(s):\n`;
+                eleves.forEach(eleve => {
+                    recap += `- ${eleve.nom} (${eleve.classe})\n`;
+                });
+                recap += `\n`;
+            } else if (parentExistant) {
+                recap += `Aucun nouvel élève ajouté (paiement de dette seulement)\n\n`;
+            }
+            
+            if (parentExistant && totalRestePrecedent > 0) {
+                recap += `Solde précédent: ${totalRestePrecedent.toLocaleString('fr-FR')} FCFA\n`;
+            }
+            
+            recap += `Montant total: ${montantTotal.toLocaleString('fr-FR')} FCFA\n`;
+            recap += `Montant versé: ${montantVerse.toLocaleString('fr-FR')} FCFA\n`;
+            recap += `Reste à payer: ${reste.toLocaleString('fr-FR')} FCFA\n`;
+            
+            alert(recap);
+        }
+        
+        // Fonction pour afficher les détails d'un paiement
+        function afficherDetails(button) {
+            const row = button.closest('tr');
+            const cells = row.querySelectorAll('td');
+            
+            let details = `DÉTAILS DU PAIEMENT\n\n`;
+            details += `Parent: ${cells[0].textContent}\n`;
+            details += `Téléphone: ${cells[1].textContent}\n`;
+            details += `Élève(s): ${cells[2].textContent}\n`;
+            details += `Classe(s): ${cells[3].textContent}\n`;
+            details += `Montant versé: ${cells[4].textContent}\n`;
+            details += `Reste à payer: ${cells[5].textContent}\n`;
+            details += `Date: ${cells[6].textContent}\n`;
+            
+            alert(details);
+        }
+        
+        // Fonction pour réinitialiser le formulaire
+        function reinitialiserFormulaire() {
+            document.getElementById('nom-parent').value = '';
+            document.getElementById('telephone').value = '';
+            document.getElementById('adresse').value = '';
+            document.getElementById('montant-verse').value = '';
+            document.getElementById('observations').value = '';
+            eleves = [];
+            parentExistant = null;
+            totalRestePrecedent = 0;
+            document.getElementById('info-parent').style.display = 'none';
+            document.getElementById('paiement-dette').style.display = 'none';
+            afficherEleves();
+            calculerMontantTotal();
+        }
+        
+        // Fonction pour imprimer l'historique
+        function imprimerHistorique() {
+            window.print();
+        }
+        
+        // Fonction pour générer un récapitulatif par parent
+        function genererRecapParent(nomParent) {
+            // Trouver tous les paiements de ce parent
+            const paiementsParent = paiements.filter(p => p.nomParent === nomParent);
+            
+            if (paiementsParent.length === 0) {
+                alert(`Aucun paiement trouvé pour ${nomParent}`);
+                return;
+            }
+            
+            let contenu = `<div class="recap-parent">
+                <h3>Récapitulatif pour: ${nomParent}</h3>
+                <p><strong>Téléphone:</strong> ${paiementsParent[0].telephone}</p>`;
+            
+            if (paiementsParent[0].adresse) {
+                contenu += `<p><strong>Adresse:</strong> ${paiementsParent[0].adresse}</p>`;
+            }
+            
+            contenu += `<table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Élève(s)</th>
+                        <th>Classe(s)</th>
+                        <th>Montant versé</th>
+                        <th>Reste à payer</th>
+                    </tr>
+                </thead>
+                <tbody>`;
+            
+            let totalVerse = 0;
+            let totalReste = 0;
+            
+            paiementsParent.forEach(p => {
+                contenu += `<tr>
+                    <td>${p.datePaiement}</td>
+                    <td>${p.eleves.map(e => e.nom).join(', ') || 'Aucun élève ajouté (paiement dette)'}</td>
+                    <td>${p.eleves.map(e => e.classe).join(', ') || '-'}</td>
+                    <td>${p.montantVerse.toLocaleString('fr-FR')} FCFA</td>
+                    <td>${p.reste.toLocaleString('fr-FR')} FCFA</td>
+                </tr>`;
+                
+                totalVerse += p.montantVerse;
+                totalReste += p.reste;
+            });
+            
+            contenu += `<tr class="total-row">
+                <td colspan="3"><strong>TOTAUX</strong></td>
+                <td><strong>${totalVerse.toLocaleString('fr-FR')} FCFA</strong></td>
+                <td><strong>${totalReste.toLocaleString('fr-FR')} FCFA</strong></td>
+            </tr>`;
+            
+            contenu += `</tbody></table></div>`;
+            
+            // Afficher dans le conteneur de récapitulatif
+            document.getElementById('contenu-recap').innerHTML = contenu;
+            document.getElementById('date-recap').textContent = new Date().toLocaleDateString();
+            document.getElementById('recap-global').style.display = 'block';
+        }
+        
+        // Fonction pour générer un récapitulatif global
+        function genererRecapGlobal() {
+            // Regrouper les paiements par parent
+            const paiementsParParent = {};
+            
+            paiements.forEach(p => {
+                if (!paiementsParParent[p.nomParent]) {
+                    paiementsParParent[p.nomParent] = [];
+                }
+                paiementsParParent[p.nomParent].push(p);
+            });
+            
+            let contenu = '';
+            
+            // Pour chaque parent, générer un récapitulatif
+            for (const nomParent in paiementsParParent) {
+                const paiementsParent = paiementsParParent[nomParent];
+                
+                let totalVerse = 0;
+                let totalReste = 0;
+                
+                contenu += `<div class="recap-parent">
+                    <h3>${nomParent}</h3>
+                    <p><strong>Téléphone:</strong> ${paiementsParent[0].telephone}</p>`;
+                
+                if (paiementsParent[0].adresse) {
+                    contenu += `<p><strong>Adresse:</strong> ${paiementsParent[0].adresse}</p>`;
+                }
+                
+                contenu += `<table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Élève(s)</th>
+                            <th>Classe(s)</th>
+                            <th>Montant versé</th>
+                            <th>Reste à payer</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
+                
+                paiementsParent.forEach(p => {
+                    contenu += `<tr>
+                        <td>${p.datePaiement}</td>
+                        <td>${p.eleves.map(e => e.nom).join(', ') || 'Aucun élève ajouté (paiement dette)'}</td>
+                        <td>${p.eleves.map(e => e.classe).join(', ') || '-'}</td>
+                        <td>${p.montantVerse.toLocaleString('fr-FR')} FCFA</td>
+                        <td>${p.reste.toLocaleString('fr-FR')} FCFA</td>
+                    </tr>`;
+                    
+                    totalVerse += p.montantVerse;
+                    totalReste += p.reste;
+                });
+                
+                contenu += `<tr class="total-row">
+                    <td colspan="3"><strong>TOTAUX</strong></td>
+                    <td><strong>${totalVerse.toLocaleString('fr-FR')} FCFA</strong></td>
+                    <td><strong>${totalReste.toLocaleString('fr-FR')} FCFA</strong></td>
+                </tr>`;
+                
+                contenu += `</tbody></table></div>`;
+            }
+            
+            // Afficher dans le conteneur de récapitulatif
+            document.getElementById('contenu-recap').innerHTML = contenu;
+            document.getElementById('date-recap').textContent = new Date().toLocaleDateString();
+            document.getElementById('recap-global').style.display = 'block';
+        }
+        
+        // Fonction pour imprimer le récapitulatif
+        function imprimerRecap() {
+            const contenu = document.getElementById('recap-global').innerHTML;
+            const ventreeImpression = window.open('', '_blank');
+            ventreeImpression.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Récapitulatif des Paiements - APEE EKALI 1</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; padding: 20px; }
+                        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+                        th, td { padding: 8px; text-align: left; border-bottom: 1px solid #ddd; }
+                        th { background-color: #f2f2f2; }
+                        .total-row { font-weight: bold; background-color: #e8f5e9; }
+                        .recap-parent { margin-bottom: 30px; page-break-inside: avoid; }
+                        h3 { color: #2c3e50; }
+                    </style>
+                </head>
+                <body>
+                    <h1 style="text-align: center;">Récapitulatif des Paiements - APEE EKALI 1</h1>
+                    <p style="text-align: center;">Date de génération: ${new Date().toLocaleDateString()}</p>
+                    ${contenu}
+                </body>
+                </html>
+            `);
+            ventreeImpression.document.close();
+            ventreeImpression.print();
+        }
+        
+        // Fonction pour fermer le récapitulatif
+        function fermerRecap() {
+            document.getElementById('recap-global').style.display = 'none';
+        }
+        
+        // Fonction pour exporter les données
+        function exporterDonnees() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(paiements, null, 2));
+            const downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href", dataStr);
+            downloadAnchorNode.setAttribute("download", "apee_paiements_" + new Date().toISOString().slice(0, 10) + ".json");
+            document.body.appendChild(downloadAnchorNode);
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
+        }
+        
+        // ==============================================
+        // FONCTIONS DE GESTION DES FICHIERS
+        // ==============================================
+
+        // Fonction pour exporter les paiements vers un fichier JSON
+        function exporterPaiements() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(paiements, null, 2));
+            const date = new Date();
+            const dateStr = date.toISOString().slice(0, 10).replace(/-/g, '');
+            const downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href", dataStr);
+            downloadAnchorNode.setAttribute("download", `apee_paiements_${dateStr}.json`);
+            document.body.appendChild(downloadAnchorNode);
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
+            
+            alert(`Fichier exporté avec succès! Nom: apee_paiements_${dateStr}.json`);
+        }
+
+        // Fonction pour importer des paiements depuis un fichier JSON
+        function importerPaiements() {
+            document.getElementById('file-input').click();
+        }
+
+        // Écouter le changement de fichier
+        document.getElementById('file-input').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (Array.isArray(data)) {
+                        if (confirm("Voulez-vous remplacer les données actuelles par celles du fichier? Cette action est irréversible.")) {
+                            paiements = data;
+                            sauvegarderPaiements();
+                            
+                            // Mettre à jour l'affichage
+                            const tbody = document.querySelector('#tableau-paiements tbody');
+                            tbody.innerHTML = '';
+                            paiements.forEach(paiement => {
+                                afficherPaiementDansTableau(paiement);
+                            });
+                            
+                            // Mettre à jour le budget
+                            mettreAJourBudget();
+                            
+                            alert("Données importées avec succès!");
+                        }
+                    } else {
+                        alert("Le fichier sélectionné n'est pas valide.");
+                    }
+                } catch (error) {
+                    alert("Erreur lors de la lecture du fichier: " + error.message);
+                }
+            };
+            reader.readAsText(file);
+            
+            // Réinitialiser l'input file
+            event.target.value = '';
+        });
+
+        // Fonction pour sauvegarder un backup complet
+        function sauvegarderBackup() {
+            const backupData = {
+                version: "1.0",
+                dateSauvegarde: new Date().toISOString(),
+                paiements: paiements
+            };
+            
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupData, null, 2));
+            const date = new Date();
+            const dateStr = date.toISOString().slice(0, 10).replace(/-/g, '');
+            const downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href", dataStr);
+            downloadAnchorNode.setAttribute("download", `apee_backup_complet_${dateStr}.json`);
+            document.body.appendChild(downloadAnchorNode);
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
+            
+            alert(`Backup complet sauvegardé! Nom: apee_backup_complet_${dateStr}.json`);
+        }
+   
+    </script>
+</body>
+</html>
