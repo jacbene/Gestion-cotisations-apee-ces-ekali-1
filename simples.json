@@ -1,0 +1,31 @@
+[
+    {
+        "id": 1694962600000,
+        "nomParent": "Marie Nguema",
+        "telephone": "690123456",
+        "adresse": "Ekali, Yaoundé",
+        "eleves": [
+            {"nom": "Paul Nguema", "classe": "6ème A"},
+            {"nom": "Claire Nguema", "classe": "5ème B"}
+        ],
+        "montantTotal": 25000,
+        "montantVerse": 20000,
+        "reste": 5000,
+        "observations": "Versement partiel",
+        "datePaiement": "17/09/2025"
+    },
+    {
+        "id": 1694962601000,
+        "nomParent": "Jean Mvondo",
+        "telephone": "677112233",
+        "adresse": "Ngoa Ekelle",
+        "eleves": [
+            {"nom": "Lucie Mvondo", "classe": "4ème C"}
+        ],
+        "montantTotal": 12500,
+        "montantVerse": 12500,
+        "reste": 0,
+        "observations": "",
+        "datePaiement": "17/09/2025"
+    }
+]
