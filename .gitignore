@@ -1,17 +1,8 @@
-# Node modules (if you ever add npm packages)
 node_modules/
-
-# OS files
 .DS_Store
 Thumbs.db
-
-# Logs
 *.log
-
-# Backup files
 *.bak
 *.tmp
-
-# IDEs
 .vscode/
 .idea/
